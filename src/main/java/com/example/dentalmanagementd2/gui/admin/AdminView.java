@@ -42,7 +42,6 @@ public class AdminView extends BorderPane {
         dentistComboBox.setItems(FXCollections.observableList(users));
         dentistComboBox.getSelectionModel().select(0);
 
-
         userButton.setDefaultButton(true);
 
         HBox mainMenu = new HBox();
