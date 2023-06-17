@@ -53,13 +53,6 @@ public class LoginView extends GridPane {
         return passwordField.getText();
     }
 
-    //String password = passwordField.getText(); // Dobijanje unesene lozinke
-
-    //private org.mindrot.jbcrypt.BCrypt BCrypt;
-    // Generisanje heš vrijednosti lozinke
-    //String hashedPassword = BCrypt.hashpw(String.valueOf(passwordField), BCrypt.gensalt());
-
-
     public void setLoginMessage(String message){
         messageLabel.setText(message);
     }

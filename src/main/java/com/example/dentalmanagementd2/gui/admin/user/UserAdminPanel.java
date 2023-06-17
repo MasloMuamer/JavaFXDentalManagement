@@ -132,6 +132,10 @@ public class UserAdminPanel extends VBox {
         User selectedUser = usersTableView.getSelectionModel().getSelectedItem();
         UserServiceLocal userService = UserServiceFactory.USER_SERVICE.getUserService();
 
+        String pwdField = passwordField.getText(); // Dobijanje unesene lozinke
+        // Generisanje heš vrijednosti lozinke
+        String hashedPassword = BCrypt.hashpw(String.valueOf(pwdField), BCrypt.gensalt());
+
         if (selectedUser == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Upozorenje");
@@ -141,7 +145,7 @@ public class UserAdminPanel extends VBox {
             return;
         }
         String username = usernameTextField.getText();
-        String password = passwordField.getText();
+        String password = hashedPassword;
         String name = nameTextField.getText();
         String surname = surnameTextField.getText();
         String privileges = privilegesChoiceBox.getValue().getName();
@@ -207,16 +211,16 @@ public class UserAdminPanel extends VBox {
         selectedUser.setSurname(surname);
         userService.remove(selectedUser);
     }
-    String password = passwordField.getText(); // Dobijanje unesene lozinke
-
-    // Generisanje heš vrijednosti lozinke
-    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
     private void addUser(ActionEvent event){
+        String pwdField = passwordField.getText(); // Dobijanje unesene lozinke
+        // Generisanje heš vrijednosti lozinke
+        String hashedPassword = BCrypt.hashpw(String.valueOf(pwdField), BCrypt.gensalt());
+
         if (validate()) {
             User users = new User();
             users.setUsername(usernameTextField.getText());
-            users.setPassword(passwordField.getText());
+            users.setPassword(hashedPassword);
             users.setName(nameTextField.getText());
             users.setSurname(surnameTextField.getText());
             users.setIdPrivilege(privilegesChoiceBox.getValue());

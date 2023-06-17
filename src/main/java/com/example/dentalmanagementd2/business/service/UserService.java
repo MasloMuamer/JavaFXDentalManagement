@@ -2,6 +2,7 @@ package com.example.dentalmanagementd2.business.service;
 
 import com.example.dentalmanagementd2.business.model.User;
 import com.example.dentalmanagementd2.commons.Constans;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,6 +14,9 @@ class UserService extends AbstractService<User, Integer> implements UserServiceL
 
     @Override
     public User login(String username, String password) {
+        // Generisanje heš vrijednosti lozinke
+        String hashedPassword = BCrypt.hashpw(String.valueOf(password), BCrypt.gensalt());
+
         if (username == null || username.isEmpty()) {
             return null;
         }
@@ -25,9 +29,8 @@ class UserService extends AbstractService<User, Integer> implements UserServiceL
         query.setParameter("username", username);
         try {
             User user = (User) query.getSingleResult();
-            if (user != null && password.equals(user.getPassword())){
+            if (BCrypt.checkpw(password, hashedPassword)) {
                 return user;
-
             }
         }catch (NoResultException e){
             System.err.println("Not exist user with username: " + username);
