@@ -1,5 +1,6 @@
 package com.example.dentalmanagementd2.gui.admin.dentist;
 
+import com.dlsc.gemsfx.TimePicker;
 import com.example.dentalmanagementd2.business.model.Appointment;
 import com.example.dentalmanagementd2.business.model.Patient;
 import com.example.dentalmanagementd2.business.model.TypeOfCheckup;
@@ -44,15 +45,13 @@ public class DentistAdminPanel extends VBox {
     private TextField phoneTextField = new TextField();
     private TextField emailTextField = new TextField();
 
-    private DatePicker datum = new DatePicker();
-
-
-    private TextField appointmentTextField = new TextField();
+    private DatePicker appointmentDatePicker = new DatePicker();
+    private TimePicker appointmentTimePicker = new TimePicker();
 
 
     private ChoiceBox<TypeOfCheckup> typeOfCheckupsChoiceBox= new ChoiceBox<>();
-    private Button addPatientButton  = new Button("Unesi Pacijenta");
 
+    private Button addPatientButton  = new Button("Unesi Pacijenta");
     private Button deletePatientButton = new Button("Obriši Pacijenta");
 
     public DentistAdminPanel(){
@@ -116,14 +115,13 @@ public class DentistAdminPanel extends VBox {
         surnameTextField.setPromptText("Prezime:");
         phoneTextField.setPromptText("Broj telefona:");
         emailTextField.setPromptText("Email:");
-        datum.converterProperty();
-        appointmentTextField.setPromptText("Vrijeme termina:");
-
+        appointmentDatePicker.converterProperty();
+        appointmentTimePicker.clockTypeProperty();
 
 
 
         form.getChildren().addAll(nameTextField,surnameTextField, phoneTextField, emailTextField,
-                appointmentTextField, datum, typeOfCheckupsChoiceBox);
+                appointmentDatePicker, appointmentTimePicker, typeOfCheckupsChoiceBox);
         return form;
 
     }
@@ -154,11 +152,12 @@ public class DentistAdminPanel extends VBox {
 
         List<Appointment> appointmentsList = new ArrayList<>();
         Appointment appointmentNew = new Appointment();
-        //appointmentNew.setDate(LocalDate, datum );
-        //appointmentNew.setTime(new LocalTime(1,10,10));
+        appointmentNew.setDate(appointmentDatePicker.getValue());
+        appointmentNew.setTime(appointmentTimePicker.getTime());
 
         AppointmentServiceLocal appointmentServiceService = AppointmentServiceFactory.APPOINTMENT_SERVICE.getAppointmentService();
         appointmentServiceService.create(appointmentNew);
+
 
         Appointment addedAppointment = appointmentServiceService.getLatestAppointment();
 
@@ -181,7 +180,8 @@ public class DentistAdminPanel extends VBox {
             String surname = surnameTextField.getText();
             String phone = phoneTextField.getText();
             String email = emailTextField.getText();
-            String appointment = appointmentTextField.getText();
+            String appointmentDatePicker = appointmentObservableList.toString();
+            String appointmentTimePicker = appointmentObservableList.toString();
 
             System.out.println(phone);
 
@@ -189,7 +189,8 @@ public class DentistAdminPanel extends VBox {
             //PRIKAZATI SMISLENU PORUKU ZA SVAKO POLJE AKO SE OSTAVI PRAZNO
             //usernameTextField.setPromptText("Morate popuniti polje:");
 
-            if (name.isEmpty() || surname == null || phone.isEmpty() || email.isEmpty() || appointment.isEmpty()) {
+            if (name.isEmpty() || surname == null || phone.isEmpty() || email.isEmpty() ||
+                    appointmentDatePicker.isEmpty() || appointmentTimePicker.isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Greška");
                 alert.setHeaderText(null);
@@ -207,7 +208,8 @@ public class DentistAdminPanel extends VBox {
                 && !surnameTextField.getText().isBlank()
                 && !phoneTextField.getText().isBlank()
                 && !emailTextField.getText().isBlank()
-                && !appointmentTextField.getText().isBlank();
+                && !appointmentDatePicker.toString().isBlank()
+                && !appointmentTimePicker.toString().isBlank();
     }
 
 
@@ -216,7 +218,8 @@ public class DentistAdminPanel extends VBox {
         surnameTextField.clear();
         phoneTextField.clear();
         emailTextField.clear();
-        appointmentTextField.clear();
+        //appointmentDatePicker.toString().clear();
+        //appointmentTimePicker.toString().clear();
     }
 
     private void removePatient(ActionEvent actionEvent) {
@@ -240,7 +243,7 @@ public class DentistAdminPanel extends VBox {
         String surname = surnameTextField.getText();
         String phone = phoneTextField.getText();
         String email = emailTextField.getText();
-        String appointment = appointmentTextField.getId();
+     //   String appointment = appointmentTextField.getId();
         String patient = typeOfCheckupsChoiceBox.getId();
 
     }

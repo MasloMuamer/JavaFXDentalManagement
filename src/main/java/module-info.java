@@ -11,6 +11,7 @@ module com.example.dentalmanagementd2 {
     requires java.desktop;
     requires java.xml.bind;
     requires jbcrypt;
+    requires com.dlsc.gemsfx;
 
 
     opens com.example.dentalmanagementd2 to javafx.fxml;
