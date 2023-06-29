@@ -34,6 +34,14 @@ public class AdminView extends BorderPane {
     private UserAdminPanel userAdminPanel = new UserAdminPanel();
     private DentistAdminPanel dentistAdminPanel = new DentistAdminPanel();
 
+    private VBox getDentistAdminPanel(int value, int dentistId) {
+        if (value == 2) {
+            dentistAdminPanel.setChosenDentist(dentistId);
+            return this.dentistAdminPanel;
+        }
+
+        return null;
+    }
 
     public AdminView(){
         setCenter(userAdminPanel);
@@ -52,10 +60,8 @@ public class AdminView extends BorderPane {
         userButton.setOnAction(e->setCenter(userAdminPanel));
 
         dentistComboBox.setOnMouseClicked(e->setCenter(
-                dentistComboBox.getValue().getIdPrivilege().getId() == 2 ? dentistAdminPanel : null));
-
-        System.out.println(dentistComboBox.getValue().getIdPrivilege().getId());
-
+                this.getDentistAdminPanel(dentistComboBox.getValue().getIdPrivilege().getId(), dentistComboBox.getValue().getId())
+        ));
 
         mainMenu.getChildren().addAll(userButton, dentistComboBox);
 

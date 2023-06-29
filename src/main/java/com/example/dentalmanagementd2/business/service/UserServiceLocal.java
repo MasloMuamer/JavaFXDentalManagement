@@ -19,5 +19,7 @@ public interface UserServiceLocal {
 
     void removeById(Integer id);
 
+    User findUserById(int userId);
+
     User  find(Integer id);
 }

@@ -1,5 +1,6 @@
 package com.example.dentalmanagementd2.business.service;
 
+import com.example.dentalmanagementd2.business.model.Appointment;
 import com.example.dentalmanagementd2.business.model.Patient;
 import com.example.dentalmanagementd2.business.model.User;
 import com.example.dentalmanagementd2.commons.Constans;
@@ -35,6 +36,18 @@ public class PatientService extends AbstractService<Patient, Integer> implements
                 .setParameter("typeOfCheckupId", typeOfCheckupId).getResultList();
     }
 
+//    public List<Patient> findAllByDentistId(int dentistId) {
+//        return getEntityManager().createQuery(
+//                        "SELECT c FROM Appointment c WHERE c.id_patient = :dentistId", Patient.class)
+//                .setParameter("userId", userId)
+//                .getResultList();
+//    }
+
+    public Patient getLatestPatient() {
+        return getEntityManager().createQuery(
+                        "SELECT c FROM Patient c ORDER BY c.id desc", Patient.class)
+                .getResultList().get(0);
+    }
 
     @Override
     protected EntityManager getEntityManager() {

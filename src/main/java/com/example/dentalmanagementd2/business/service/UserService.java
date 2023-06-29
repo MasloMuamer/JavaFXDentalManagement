@@ -29,7 +29,7 @@ class UserService extends AbstractService<User, Integer> implements UserServiceL
         query.setParameter("username", username);
         try {
             User user = (User) query.getSingleResult();
-            if (BCrypt.checkpw(password, hashedPassword)) {
+            if (BCrypt.checkpw(password, hashedPassword) && user.getPassword().startsWith("$2a$")) {
                 return user;
             }
         }catch (NoResultException e){
@@ -46,6 +46,13 @@ class UserService extends AbstractService<User, Integer> implements UserServiceL
                         "SELECT c FROM User c WHERE c.idPrivilege = :privilegeId", User.class)
                 .setParameter("privilegeId", privilegeId)
                 .getResultList();
+    }
+
+    public User findUserById(int userId) {
+        return getEntityManager().createQuery(
+                        "SELECT c FROM User c WHERE c.id = :userId", User.class)
+                .setParameter("userId", userId)
+                .getSingleResult();
     }
 
     @Override

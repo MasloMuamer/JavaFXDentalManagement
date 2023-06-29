@@ -19,6 +19,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import com.example.dentalmanagementd2.business.service.UserServiceFactory;
+import org.hibernate.type.LocalDateTimeType;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -31,7 +33,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 
+import static java.time.LocalTime.now;
+
 public class DentistAdminPanel extends VBox {
+    int chosenDentist = 2;
+
+    public void setChosenDentist(int value) {
+        this.chosenDentist = value;
+    }
+
+    public int getChosenDentist() {
+        return this.chosenDentist;
+    }
+
     private Label titleLabel = new Label("Rezervacija pacijenata");
     private ObservableList<Patient> patientsObservableList;
     private ObservableList<Appointment> appointmentObservableList;
@@ -55,6 +69,9 @@ public class DentistAdminPanel extends VBox {
     private Button deletePatientButton = new Button("Obriši Pacijenta");
 
     public DentistAdminPanel(){
+        //User selectedDentist = UserServiceFactory.USER_SERVICE.getUserService().findUserById(this.getChosenDentist());
+        //System.out.println(selectedDentist.getPassword());
+
         titleLabel.setFont(new Font("Arial", 22));
         setSpacing(5);
         setPadding(new Insets(12, 12, 12, 12));
@@ -118,8 +135,6 @@ public class DentistAdminPanel extends VBox {
         appointmentDatePicker.converterProperty();
         appointmentTimePicker.clockTypeProperty();
 
-
-
         form.getChildren().addAll(nameTextField,surnameTextField, phoneTextField, emailTextField,
                 appointmentDatePicker, appointmentTimePicker, typeOfCheckupsChoiceBox);
         return form;
@@ -145,35 +160,45 @@ public class DentistAdminPanel extends VBox {
     private void addPatient(ActionEvent event){
         Patient patient = new Patient();
         List<Patient> patientsList = new ArrayList<>();
-        patientsList.add(patient);
 
         List<TypeOfCheckup> checkupList = new ArrayList<>();
         checkupList.add(typeOfCheckupsChoiceBox.getSelectionModel().getSelectedItem());
 
         List<Appointment> appointmentsList = new ArrayList<>();
         Appointment appointmentNew = new Appointment();
-        appointmentNew.setDate(appointmentDatePicker.getValue());
-        appointmentNew.setTime(appointmentTimePicker.getTime());
 
         AppointmentServiceLocal appointmentServiceService = AppointmentServiceFactory.APPOINTMENT_SERVICE.getAppointmentService();
-        appointmentServiceService.create(appointmentNew);
-
-
-        Appointment addedAppointment = appointmentServiceService.getLatestAppointment();
-
-        System.out.println(addedAppointment);
-        appointmentsList.add(addedAppointment);
 
         if (validate()) {
             patient.setName(nameTextField.getText());
             patient.setSurname(surnameTextField.getText());
             patient.setPhone(Integer.parseInt(phoneTextField.getText()));
             patient.setEmail(emailTextField.getText());
-            patient.setAppointmentList(appointmentsList);
             patient.setTypeOfCheckupList(checkupList);
+
+            // Dodavanje Appointment-a
+            appointmentNew.setDate(appointmentDatePicker.getValue());
+            appointmentNew.setTime(appointmentTimePicker.getTime());
+            appointmentNew.setPatientList(patientsList);
+            appointmentServiceService.create(appointmentNew);
+
+            Appointment addedAppointment = appointmentServiceService.getLatestAppointment();
+            appointmentsList.add(addedAppointment);
+
+            // Kreiranje korisnika
+            patientsList.add(patient);
+            patient.setAppointmentList(appointmentsList);
+
             PatientServiceLocal patientService = PatientServiceFactory.SERVICE.getPatientService();
             patientService.create(patient);
             patientsObservableList.add(patient);
+
+            Patient addedPatient = patientService.getLatestPatient();
+            List<Patient> patientListForAppointment = new ArrayList<>();
+            patientListForAppointment.add(addedPatient);
+            addedAppointment.setPatientList(patientListForAppointment);
+            appointmentServiceService.edit(addedAppointment);
+
             clearInput();
         }else {
             String name = nameTextField.getText();
@@ -214,19 +239,26 @@ public class DentistAdminPanel extends VBox {
 
 
     private void clearInput(){
+        LocalTime midnight = LocalTime.of(0, 0, 0);
+
         nameTextField.clear();
         surnameTextField.clear();
         phoneTextField.clear();
         emailTextField.clear();
-        //appointmentDatePicker.toString().clear();
-        //appointmentTimePicker.toString().clear();
+        appointmentDatePicker.getEditor().clear();
+        appointmentTimePicker.setTime(midnight);
     }
 
     private void removePatient(ActionEvent actionEvent) {
         Patient selectedPatient = patientsTableView.getSelectionModel().getSelectedItem();
         PatientServiceLocal patientService = PatientServiceFactory.SERVICE.getPatientService();
+        AppointmentServiceLocal appointmentService = AppointmentServiceFactory.APPOINTMENT_SERVICE.getAppointmentService();
 
+        if (!selectedPatient.getAppointmentList().isEmpty()) {
+            appointmentService.remove(selectedPatient.getAppointmentList().get(0));
+        }
         patientService.removeById(selectedPatient.getId());
+
         patientsObservableList.remove(selectedPatient);
 
         if (selectedPatient == null) {
@@ -237,15 +269,6 @@ public class DentistAdminPanel extends VBox {
             alert.showAndWait();
             return;
         }
-
-
-        String name = nameTextField.getText();
-        String surname = surnameTextField.getText();
-        String phone = phoneTextField.getText();
-        String email = emailTextField.getText();
-     //   String appointment = appointmentTextField.getId();
-        String patient = typeOfCheckupsChoiceBox.getId();
-
     }
 
 
