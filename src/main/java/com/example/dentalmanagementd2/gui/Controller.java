@@ -2,7 +2,7 @@ package com.example.dentalmanagementd2.gui;
 
 import com.example.dentalmanagementd2.business.model.User;
 import com.example.dentalmanagementd2.gui.admin.AdminView;
-import com.example.dentalmanagementd2.gui.employee.EmpolyeeView;
+import com.example.dentalmanagementd2.gui.employee.EmployeeView;
 import com.example.dentalmanagementd2.gui.events.EventBus;
 import com.example.dentalmanagementd2.gui.login.LoginView;
 import javafx.stage.Stage;
@@ -13,7 +13,7 @@ public class Controller {
 
     private LoginView loginView;
     private AdminView adminView;
-    private EmpolyeeView employeeView;
+    private EmployeeView employeeView;
     private User loggedUser;
     private Stage stage;
     private EventBus eventBus = new EventBus();
@@ -59,11 +59,11 @@ public class Controller {
     }
 
 
-    public EmpolyeeView getEmployeeView() {
+    public EmployeeView getEmployeeView() {
         return employeeView;
     }
 
-    public void setEmployeeView(EmpolyeeView employeeView) {
+    public void setEmployeeView(EmployeeView employeeView) {
         this.employeeView = employeeView;
     }
 

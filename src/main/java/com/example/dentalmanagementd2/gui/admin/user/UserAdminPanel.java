@@ -16,11 +16,18 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.skin.TableHeaderRow;
+import javafx.scene.control.skin.TableViewSkinBase;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.awt.event.MouseEvent;
@@ -63,12 +70,61 @@ public class UserAdminPanel extends VBox {
         usersTableView.setItems(usersObservableList);
         usersTableView.getColumns().addAll(usernameColumn, nameColumn, surnameColumn, privilegeColumn);
         getChildren().addAll(titleLabel, usersTableView, getForm(), getNewForm());
+
+
+        usersTableView.setStyle("-fx-control-inner-background: rgb(135, 206, 250);"); // Promijenite boju podloge prema potrebi
+
+        Light.Distant light = new Light.Distant();
+        light.setAzimuth(-135);
+        light.setElevation(30);
+
+        Lighting lighting = new Lighting();
+        lighting.setLight(light);
+        usersTableView.setEffect(lighting);
+
+
     }
+
 
     private HBox getForm(){
         HBox form = new HBox();
         form.setSpacing(5);
         form.setAlignment(Pos.CENTER);
+
+
+
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setColor(Color.AQUA);
+        usernameTextField.setEffect(dropShadow);
+        passwordField.setEffect(dropShadow);
+        nameTextField.setEffect(dropShadow);
+        surnameTextField.setEffect(dropShadow);
+        privilegesChoiceBox.setEffect(dropShadow);
+
+        usernameTextField.setStyle("-fx-background-color: aqua;");
+        passwordField.setStyle("-fx-background-color:aqua;");
+        nameTextField.setStyle("-fx-background-color: aqua;");
+        surnameTextField.setStyle("-fx-background-color: aqua;");
+        privilegesChoiceBox.setStyle("-fx-background-color: aqua;");
+
+        Font boldFont = Font.font("Arial", FontWeight.BOLD, 11); // Promijenite naziv fonta i veličinu prema potrebi
+        usernameTextField.setFont(boldFont);
+        passwordField.setFont(boldFont);
+        nameTextField.setFont(boldFont);
+        surnameTextField.setFont(boldFont);
+        privilegesChoiceBox.setStyle("-fx-font-weight: bold;");
+
+        Light.Distant light = new Light.Distant();
+        light.setAzimuth(-135);
+        light.setElevation(30);
+
+        Lighting lighting = new Lighting();
+        lighting.setLight(light);
+        usernameTextField.setEffect(lighting);
+        passwordField.setEffect(lighting);
+        nameTextField.setEffect(lighting);
+        surnameTextField.setEffect(lighting);
+        privilegesChoiceBox.setEffect(lighting);
 
         List<Privilege> privileges = PrivilegeServiceFactory.PRIVILEGE_SERVICE.getPrivilegeService().findAll();
         privilegesChoiceBox.setItems(FXCollections.observableList(privileges));
@@ -115,6 +171,32 @@ public class UserAdminPanel extends VBox {
         newForm.setSpacing(5);
         newForm.setAlignment(Pos.CENTER);
 
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setColor(Color.AQUA);
+        addUserButton.setEffect(dropShadow);
+        deleteUserButton.setEffect(dropShadow);
+        updateButton.setEffect(dropShadow);
+
+        addUserButton.setStyle("-fx-background-color: silver;");
+        deleteUserButton.setStyle("-fx-background-color: silver;");
+        updateButton.setStyle("-fx-background-color: silver;");
+
+        Font boldFont = Font.font("Arial", FontWeight.BOLD, 11); // Promijenite naziv fonta i veličinu prema potrebi
+        addUserButton.setFont(boldFont);
+        deleteUserButton.setFont(boldFont);
+        updateButton.setFont(boldFont);
+
+        Light.Distant light = new Light.Distant();
+        light.setAzimuth(-135);
+        light.setElevation(30);
+
+        Lighting lighting = new Lighting();
+        lighting.setLight(light);
+        addUserButton.setEffect(lighting);
+        deleteUserButton.setEffect(lighting);
+        updateButton.setEffect(lighting);
+
+
         addUserButton.setOnAction(this::addUser);
         deleteUserButton.setOnAction(this::removeUser);
         updateButton.setOnAction(this::edit);
@@ -141,6 +223,19 @@ public class UserAdminPanel extends VBox {
             alert.setTitle("Upozorenje");
             alert.setHeaderText(null);
             alert.setContentText("Morate selektirati korisnika iz tablice duplim klikom!");
+
+            Region dialogPane = (Region) alert.getDialogPane();
+            dialogPane.setStyle("-fx-background-color: silver;"); // Promijenite boju pozadine prozora prema potrebi
+
+            Light.Distant light = new Light.Distant();
+            light.setAzimuth(-135.0);
+
+            Lighting lighting = new Lighting();
+            lighting.setLight(light);
+            lighting.setSurfaceScale(5.0);
+
+            dialogPane.setEffect(lighting);
+
             alert.showAndWait();
             return;
         }
@@ -150,11 +245,24 @@ public class UserAdminPanel extends VBox {
         String surname = surnameTextField.getText();
         String privileges = privilegesChoiceBox.getValue().getName();
 
-        if (username.isEmpty() || password.isEmpty() || name.isEmpty() || surname == null) {
+        if (username.isEmpty() || password.isEmpty() || name.isEmpty() || surname == null || privileges.isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Greška");
             alert.setHeaderText(null);
             alert.setContentText("Morate popuniti sva polja!");
+
+            Region dialogPane = (Region) alert.getDialogPane();
+            dialogPane.setStyle("-fx-background-color: silver;"); // Promijenite boju pozadine prozora prema potrebi
+
+            Light.Distant light = new Light.Distant();
+            light.setAzimuth(-135.0);
+
+            Lighting lighting = new Lighting();
+            lighting.setLight(light);
+            lighting.setSurfaceScale(5.0);
+
+            dialogPane.setEffect(lighting);
+
             alert.showAndWait();
             return;
         }
@@ -167,25 +275,35 @@ public class UserAdminPanel extends VBox {
         selectedUser.setSurname(surname);
         selectedUser.setIdPrivilege(privilegesChoiceBox.getValue());
         userService.edit(selectedUser);
+        usersTableView.getSelectionModel().clearSelection();
         clearInput();
 
 
     }
 
     private void removeUser(ActionEvent actionEvent) {
-       User selectedUser = usersTableView.getSelectionModel().getSelectedItem();
+       User selectedUserRemove = usersTableView.getSelectionModel().getSelectedItem();
        UserServiceLocal userService = UserServiceFactory.USER_SERVICE.getUserService();
 
+        if (selectedUserRemove == null) {
+            Alert alertRemove = new Alert(Alert.AlertType.WARNING);
+            alertRemove.setTitle("Upozorenje");
+            alertRemove.setHeaderText(null);
+            alertRemove.setContentText("Morate selektirati korisnika iz tablice!");
 
-        userService.removeById(selectedUser.getId());
-       usersObservableList.remove(selectedUser);
+            Region dialogPane = (Region) alertRemove.getDialogPane();
+            dialogPane.setStyle("-fx-background-color: silver;"); // Promijenite boju pozadine prozora prema potrebi
 
-        if (selectedUser == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Upozorenje");
-            alert.setHeaderText(null);
-            alert.setContentText("Morate selektirati korisnika iz tablice duplim klikom!");
-            alert.showAndWait();
+            Light.Distant light = new Light.Distant();
+            light.setAzimuth(-135.0);
+
+            Lighting lighting = new Lighting();
+            lighting.setLight(light);
+            lighting.setSurfaceScale(5.0);
+
+            dialogPane.setEffect(lighting);
+
+            alertRemove.showAndWait();
             return;
         }
         String username = usernameTextField.getText();
@@ -194,22 +312,17 @@ public class UserAdminPanel extends VBox {
         String surname = surnameTextField.getText();
         String privileges = privilegesChoiceBox.getValue().getName();
 
-        if (username.isEmpty() || password.isEmpty() || name.isEmpty() || surname == null) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Greška");
-            alert.setHeaderText(null);
-            alert.setContentText("Morate popuniti sva polja!");
-            alert.showAndWait();
-            return;
-        }
+        userService.removeById(selectedUserRemove.getId());
+       usersObservableList.remove(selectedUserRemove);
 
+        usersTableView.getSelectionModel().clearSelection();
+        clearInput();
 
-
-        selectedUser.setUsername(username);
-        selectedUser.setPassword(password);
-        selectedUser.setName(name);
-        selectedUser.setSurname(surname);
-        userService.remove(selectedUser);
+       selectedUserRemove.setUsername(username);
+        selectedUserRemove.setPassword(password);
+        selectedUserRemove.setName(name);
+        selectedUserRemove.setSurname(surname);
+        userService.remove(selectedUserRemove);
     }
 
     private void addUser(ActionEvent event){
@@ -227,6 +340,7 @@ public class UserAdminPanel extends VBox {
             UserServiceLocal userService = UserServiceFactory.USER_SERVICE.getUserService();
             userService.create(users);
             usersObservableList.add(users);
+            usersTableView.getSelectionModel().clearSelection();
             clearInput();
         }else {
 
@@ -242,6 +356,19 @@ public class UserAdminPanel extends VBox {
                 alert.setTitle("Greška");
                 alert.setHeaderText(null);
                 alert.setContentText("Morate popuniti sva polja!");
+
+                Region dialogPane = (Region) alert.getDialogPane();
+                dialogPane.setStyle("-fx-background-color: silver;"); // Promijenite boju pozadine prozora prema potrebi
+
+                Light.Distant light = new Light.Distant();
+                light.setAzimuth(-135.0);
+
+                Lighting lighting = new Lighting();
+                lighting.setLight(light);
+                lighting.setSurfaceScale(5.0);
+
+                dialogPane.setEffect(lighting);
+
                 alert.showAndWait();
                 return;
             }

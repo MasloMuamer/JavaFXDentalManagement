@@ -5,7 +5,7 @@ import com.example.dentalmanagementd2.business.model.User;
 import com.example.dentalmanagementd2.business.service.UserServiceFactory;
 import com.example.dentalmanagementd2.gui.Controller;
 import com.example.dentalmanagementd2.gui.admin.AdminView;
-import com.example.dentalmanagementd2.gui.employee.EmpolyeeView;
+import com.example.dentalmanagementd2.gui.employee.EmployeeView;
 import com.example.dentalmanagementd2.gui.login.LoginView;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -36,15 +36,18 @@ public class LoginEvent implements EventHandler<ActionEvent> {
                 Controller.instance().getStage().setTitle("Admin Panel: " + Controller.instance().getLoggedUser().getName());
 
 
+
+
             }else{
-                mainPanel = new EmpolyeeView();
-                Controller.instance().setEmployeeView((EmpolyeeView) mainPanel);
+                mainPanel = new EmployeeView();
+                Controller.instance().setEmployeeView((EmployeeView) mainPanel);
                 Controller.instance().getStage().setTitle("Dentist Panel: " + user.getName()+" " + user.getSurname());
 
 
 
+
             }
-            Scene scene = new Scene(mainPanel,1000, 555);
+            Scene scene = new Scene(mainPanel,1200, 600);
             Controller.instance().getStage().setScene(scene);
         }
 

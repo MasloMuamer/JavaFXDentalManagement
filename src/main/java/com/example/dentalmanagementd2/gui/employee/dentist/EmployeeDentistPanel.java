@@ -1,10 +1,9 @@
-package com.example.dentalmanagementd2.gui.admin.dentist;
+package com.example.dentalmanagementd2.gui.employee.dentist;
 
 import com.dlsc.gemsfx.TimePicker;
 import com.example.dentalmanagementd2.business.model.Appointment;
 import com.example.dentalmanagementd2.business.model.Patient;
 import com.example.dentalmanagementd2.business.model.TypeOfCheckup;
-import com.example.dentalmanagementd2.business.model.User;
 import com.example.dentalmanagementd2.business.service.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -25,25 +24,15 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import com.example.dentalmanagementd2.business.service.UserServiceFactory;
 import javafx.scene.text.FontWeight;
-import org.hibernate.type.LocalDateTimeType;
 
-import java.math.BigDecimal;
-import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
 
-import static java.time.LocalTime.now;
-import static java.time.LocalTime.of;
+public class EmployeeDentistPanel extends VBox {
 
-public class DentistAdminPanel extends VBox {
     int chosenDentist = 2;
 
     public void setChosenDentist(int value) {
@@ -61,7 +50,6 @@ public class DentistAdminPanel extends VBox {
 
     private TableView<Patient> patientsTableView = new TableView<>();
 
-
     private TextField nameTextField = new TextField();
     private TextField surnameTextField = new TextField();
     private TextField phoneTextField = new TextField();
@@ -75,7 +63,7 @@ public class DentistAdminPanel extends VBox {
     private Button deletePatientButton = new Button("Obriši Pacijenta");
     private Button editPatientButon = new Button("Ispravka unosa pacijenta");
 
-    public DentistAdminPanel(){
+    public EmployeeDentistPanel(){
 
         titleLabel.setFont(new Font("Arial", 22));
         setSpacing(5);
@@ -133,7 +121,6 @@ public class DentistAdminPanel extends VBox {
         lighting.setLight(light);
         patientsTableView.setEffect(lighting);
     }
-
     private HBox getForm(){
         HBox form = new HBox();
         form.setSpacing(5);
@@ -152,7 +139,7 @@ public class DentistAdminPanel extends VBox {
         nameTextField.setStyle("-fx-background-color: aqua;");
         surnameTextField.setStyle("-fx-background-color: aqua;");
         phoneTextField.setStyle("-fx-background-color: aqua;");
-        emailTextField.setStyle("-fx-background-color: aqua;");
+        emailTextField.setStyle("-fx-background-color:aqua;");
         typeOfCheckupsChoiceBox.setStyle("-fx-background-color: aqua;");
         appointmentDatePicker.setStyle("-fx-background-color: aqua;");
         appointmentTimePicker.setStyle("-fx-background-color: aqua;");
@@ -180,7 +167,6 @@ public class DentistAdminPanel extends VBox {
         appointmentDatePicker.setEffect(lighting);
         appointmentTimePicker.setEffect(lighting);
 
-
         List<TypeOfCheckup> typeOfCheckups = TypeOfCheckupServiceFactory.TYPE_OF_CHECKUP_SERVICE.getTypeOfCheckupsService().findAll();
         typeOfCheckupsChoiceBox.setItems(FXCollections.observableList(typeOfCheckups));
         typeOfCheckupsChoiceBox.getSelectionModel().select(0);
@@ -189,6 +175,7 @@ public class DentistAdminPanel extends VBox {
         surnameTextField.setPromptText("Prezime:");
         phoneTextField.setPromptText("Broj telefona:");
         emailTextField.setPromptText("Email:");
+
 
         LocalTime rightNow = LocalTime.now();
         LocalDate dateNow = LocalDate.now();
@@ -253,6 +240,7 @@ public class DentistAdminPanel extends VBox {
 
 
 
+
         addPatientButton.setOnAction(this::addPatient);
         deletePatientButton.setOnAction(this::removePatient);
         editPatientButon.setOnAction(this::editPatient);
@@ -260,10 +248,6 @@ public class DentistAdminPanel extends VBox {
         newForm.getChildren().addAll(addPatientButton, deletePatientButton, editPatientButon);
         return newForm;
     }
-
-
-
-
     private void addPatient(ActionEvent event){
         Patient patient = new Patient();
         List<Patient> patientsList = new ArrayList<>();
@@ -308,7 +292,8 @@ public class DentistAdminPanel extends VBox {
             appointmentServiceService.edit(addedAppointment);
 
             patientsTableView.getSelectionModel().clearSelection();
-            clearInput();
+            clearInputPatient();
+
         }else {
 
 
@@ -341,6 +326,8 @@ public class DentistAdminPanel extends VBox {
                 alert.showAndWait();
                 return;
             }
+
+
         }
     }
 
@@ -354,7 +341,7 @@ public class DentistAdminPanel extends VBox {
     }
 
 
-     void clearInput(){
+    void clearInputPatient(){
         LocalTime midnight = LocalTime.of(0, 0, 0);
 
         nameTextField.clear();
@@ -374,7 +361,7 @@ public class DentistAdminPanel extends VBox {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Upozorenje");
             alert.setHeaderText(null);
-            alert.setContentText("Morate selektirati pacijenta iz tablice!");
+            alert.setContentText("Morate selektirati korisnika iz tablice!");
 
             Region dialogPane = (Region) alert.getDialogPane();
             dialogPane.setStyle("-fx-background-color: aqua;"); // Promijenite boju pozadine prozora prema potrebi
@@ -391,16 +378,28 @@ public class DentistAdminPanel extends VBox {
             alert.showAndWait();
             return;
         }
+        String name = nameTextField.getText();
+        String surname = surnameTextField.getText();
+        String phone = phoneTextField.getText();
+        String email = emailTextField.getText();
+        String datePicker = String.valueOf(appointmentDatePicker.getValue());
+        String timePicker = String.valueOf(appointmentTimePicker.getTime());
+
+
 
         if (!selectedPatient.getAppointmentList().isEmpty()) {
             appointmentService.remove(selectedPatient.getAppointmentList().get(0));
         }
         patientService.removeById(selectedPatient.getId());
-        patientsObservableList.remove(selectedPatient);
 
+        patientsObservableList.remove(selectedPatient);
         patientsTableView.getSelectionModel().clearSelection();
-        clearInput();
+        clearInputPatient();
+
+
+
     }
+
 
     private void editPatient(ActionEvent actionEvent){
         Patient selectedPatient = patientsTableView.getSelectionModel().getSelectedItem();
@@ -480,13 +479,10 @@ public class DentistAdminPanel extends VBox {
         selectedPatient.setTypeOfCheckupList(checkupList);
         patientService.edit(selectedPatient);
         patientsTableView.getSelectionModel().clearSelection();
-        clearInput();
+        clearInputPatient();
 
 
 
     }
+
 }
-
-
-
-

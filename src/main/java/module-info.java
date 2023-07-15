@@ -12,6 +12,7 @@ module com.example.dentalmanagementd2 {
     requires java.xml.bind;
     requires jbcrypt;
     requires com.dlsc.gemsfx;
+    requires jfxtras.controls;
 
 
     opens com.example.dentalmanagementd2 to javafx.fxml;
